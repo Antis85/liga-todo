@@ -8,6 +8,7 @@ export interface TaskEntity {
   isDone: boolean;
 }
 
+export type FormTaskEntity = Omit<TaskEntity, 'id'>;
 export interface TasksStatsEntity {
   total: number;
   important: number;

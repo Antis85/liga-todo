@@ -1,10 +1,9 @@
 import { makeObservable, observable, action, computed } from 'mobx';
 import { delay } from 'helpers/index';
-import { SearchFormEntity, TaskEntity, TasksStatsEntity } from 'domains/index';
+import { SearchFormEntity, TaskEntity, TasksStatsEntity, FormTaskEntity } from 'domains/index';
 import { TasksMock, TasksStatsMock } from '__mocks__/index';
 //////////////////////////////////////////////////////////////////
 type PrivateFields = '_isRequestActive' | '_errorText';
-type AddTaskEntity = Omit<TaskEntity, 'id'>;
 //////////////////////////////////////////////////////////////////
 export class AddTaskStore {
   constructor() {
@@ -35,7 +34,7 @@ export class AddTaskStore {
     this._isRequestActive = value;
   }
 
-  addTask = async (addTaskParams: AddTaskEntity) => {
+  addTask = async (addTaskParams: FormTaskEntity) => {
     this.isRequestActive = true;
     console.log('addTaskParams', addTaskParams);
     //TODO: POST запрос на сервер
