@@ -1,10 +1,8 @@
 import { makeObservable, observable, action, computed } from 'mobx';
-import { delay } from 'helpers/index';
+import { PrivateFields } from './Tasks.store.types';
 import { SearchFormEntity, TaskEntity, TasksStatsEntity } from 'domains/index';
-import { TasksMock, TasksStatsMock } from '__mocks__/index';
-//////////////////////////////////////////////////////////////////
-type PrivateFields = '_tasks' | '_tasksStats' | '_isTasksLoading';
-//////////////////////////////////////////////////////////////////
+import { getInternalTasksStats, mapToExternalParams, mapToInternalTasks } from 'helpers/index';
+import { TaskAgentInstance } from 'http/index';
 export class TasksStore {
   constructor() {
     makeObservable<this, PrivateFields>(this, {
@@ -22,9 +20,9 @@ export class TasksStore {
     });
   }
 
-  private _tasks: TaskEntity[] = [];
+  private _tasks: TaskEntity[] | null = [];
 
-  private _tasksStats: TasksStatsEntity = {
+  private _tasksStats: TasksStatsEntity | null = {
     total: 0,
     important: 0,
     done: 0,
@@ -32,7 +30,7 @@ export class TasksStore {
 
   private _isTasksLoading = false;
 
-  get tasks(): TaskEntity[] {
+  get tasks(): TaskEntity[] | null {
     return this._tasks;
   }
 
@@ -40,7 +38,7 @@ export class TasksStore {
     this._tasks = value;
   }
 
-  get tasksStats(): TasksStatsEntity {
+  get tasksStats(): TasksStatsEntity | null {
     return this._tasksStats;
   }
 
@@ -58,35 +56,60 @@ export class TasksStore {
 
   loadTasks = async (searchParams?: SearchFormEntity) => {
     this.isTasksLoading = true;
-    // console.log('isTasksLoading', this._isTasksLoading);
-    console.log('searchParams', searchParams);
-    // TODO: Убрать моки, привязаться к бэку
-    this.tasks = TasksMock;
-    // console.log('this.tasks', this.tasks);
-    this.tasksStats = TasksStatsMock;
-    await delay(3000);
-    this.isTasksLoading = false;
+    try {
+      const externalSearchParams = mapToExternalParams(searchParams);
+      const res = await TaskAgentInstance.getAllTasks(externalSearchParams);
+      this.tasks = mapToInternalTasks(res);
+      this.tasksStats = getInternalTasksStats(res);
+    } catch (error) {
+      console.log('Tasks.store_loadTasks_error: ', error);
+      this.tasks = null;
+      this.tasksStats = null;
+    } finally {
+      this.isTasksLoading = false;
+    }
   };
 
-  changeTaskImportance = (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  changeTaskImportance = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
     this.isTasksLoading = true;
-    // TODO: Добавить запрос к серверу
-    console.log('important', taskId, !currentStatus);
-    this.loadTasks();
+    try {
+      await TaskAgentInstance.updateTask(taskId, { isImportant: !currentStatus });
+      this.loadTasks();
+    } catch (error) {
+      console.log('changeTaskImportance_error: ', error);
+      this.tasks = null;
+      this.tasksStats = null;
+    } finally {
+      this.isTasksLoading = false;
+    }
   };
 
-  changeTaskComplete = (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  changeTaskComplete = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
     this.isTasksLoading = true;
-    // TODO: Добавить запрос к серверу
-    console.log('complete', taskId, !currentStatus);
-    this.loadTasks();
+    try {
+      await TaskAgentInstance.updateTask(taskId, { isCompleted: !currentStatus });
+      this.loadTasks();
+    } catch (error) {
+      console.log('changeTaskComplete_error: ', error);
+      this.tasks = null;
+      this.tasksStats = null;
+    } finally {
+      this.isTasksLoading = false;
+    }
   };
 
-  deleteTask = (taskId: TaskEntity['id']) => {
+  deleteTask = async (taskId: TaskEntity['id']) => {
     this.isTasksLoading = true;
-    // TODO: Добавить запрос к серверу
-    console.log('delete', taskId);
-    this.loadTasks();
+    try {
+      await TaskAgentInstance.deleteTask(taskId);
+      this.loadTasks();
+    } catch (error) {
+      console.log('deleteTask_error: ', error);
+      this.tasks = null;
+      this.tasksStats = null;
+    } finally {
+      this.isTasksLoading = false;
+    }
   };
 }
 

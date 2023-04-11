@@ -9,6 +9,7 @@ export interface TaskEntity {
 }
 
 export type FormTaskEntity = Omit<TaskEntity, 'id'>;
+
 export interface TasksStatsEntity {
   total: number;
   important: number;

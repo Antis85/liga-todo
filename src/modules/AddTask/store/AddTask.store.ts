@@ -1,10 +1,8 @@
 import { makeObservable, observable, action, computed } from 'mobx';
-import { delay } from 'helpers/index';
-import { SearchFormEntity, TaskEntity, TasksStatsEntity, FormTaskEntity } from 'domains/index';
-import { TasksMock, TasksStatsMock } from '__mocks__/index';
-//////////////////////////////////////////////////////////////////
-type PrivateFields = '_isRequestActive' | '_errorText';
-//////////////////////////////////////////////////////////////////
+import { PrivateFields } from './AddTask.store.types';
+import { mapToInternalTask } from 'helpers/index';
+import { FormTaskEntity } from 'domains/index';
+import { TaskAgentInstance } from 'http/index';
 export class AddTaskStore {
   constructor() {
     makeObservable<this, PrivateFields>(this, {
@@ -26,6 +24,10 @@ export class AddTaskStore {
     return this._errorText;
   }
 
+  set errorText(text: string) {
+    this._errorText = text;
+  }
+
   get isRequestActive(): boolean {
     return this._isRequestActive;
   }
@@ -36,11 +38,17 @@ export class AddTaskStore {
 
   addTask = async (addTaskParams: FormTaskEntity) => {
     this.isRequestActive = true;
-    console.log('addTaskParams', addTaskParams);
-    //TODO: POST запрос на сервер
-    await delay(3000);
-    this.isRequestActive = false;
-    return true;
+    try {
+      const data = await TaskAgentInstance.createTask(addTaskParams);
+      const task = mapToInternalTask(data);
+      if (task?.id) return true;
+      if (!task || !task?.id) this.errorText = 'Ошибка. Задача не добавлена. Попробуйте создать задачу еще раз...';
+    } catch (error) {
+      console.log('addTask_error: ', error);
+      this.errorText = 'Ошибка. Задача не добавлена. Попробуйте создать задачу еще раз...';
+    } finally {
+      this.isRequestActive = false;
+    }
   };
 }
 

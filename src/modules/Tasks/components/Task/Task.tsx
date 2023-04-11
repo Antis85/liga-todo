@@ -8,17 +8,11 @@ import { EDIT, ROOT } from 'constants/index';
 export function TaskProto({ task, changeTaskImportance, deleteTask, changeTaskComplete }: TaskProps) {
   const { name, info, isImportant, isDone, id } = task;
 
-  const ButtonImportanceClickHandler = () => {
-    changeTaskImportance(id, isImportant);
-  };
+  const ButtonImportanceClickHandler = () => changeTaskImportance(id, isImportant);
 
-  const ButtonCompleteClickHandler = () => {
-    changeTaskComplete(id, isDone);
-  };
+  const ButtonCompleteClickHandler = () => changeTaskComplete(id, isDone);
 
-  const ButtonTaskDeleteClickHandler = () => {
-    deleteTask(id);
-  };
+  const ButtonTaskDeleteClickHandler = () => deleteTask(id);
 
   return (
     <div>
@@ -55,7 +49,6 @@ export function TaskProto({ task, changeTaskImportance, deleteTask, changeTaskCo
             <i className="fa fa-trash-o" />
           </button>
 
-          {/* TODO: Исправить ссылку, когда будет страница редактирования */}
           <Link className="task__btn btn btn-outline-secondary btn-sm float-right" to={`${ROOT}${EDIT}/${id}`}>
             <i className="fa fa-pencil" />
           </Link>

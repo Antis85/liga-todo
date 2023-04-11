@@ -1,12 +1,8 @@
 import { makeObservable, observable, action, computed } from 'mobx';
-import { delay } from 'helpers/index';
-import { SearchFormEntity, TaskEntity, TasksStatsEntity } from 'domains/index';
-import { TasksMock, TasksStatsMock } from '__mocks__/index';
-//////////////////////////////////////////////////////////////////
-type PrivateFields = '_task' | '_isRequestActive' | '_errorText';
-// type AddTaskEntity = Omit<TaskEntity, 'id'>;
-type EditTaskId = string | undefined;
-//////////////////////////////////////////////////////////////////
+import { PrivateFields } from './EditTask.store.types';
+import { mapToExternalTask, mapToInternalTask } from 'helpers/index';
+import { FormTaskEntity, TaskEntity } from 'domains/index';
+import { TaskAgentInstance } from 'http/index';
 export class EditTaskStore {
   constructor() {
     makeObservable<this, PrivateFields>(this, {
@@ -47,6 +43,10 @@ export class EditTaskStore {
     return this._errorText;
   }
 
+  set errorText(text: string) {
+    this._errorText = text;
+  }
+
   get isRequestActive(): boolean {
     return this._isRequestActive;
   }
@@ -55,33 +55,39 @@ export class EditTaskStore {
     this._isRequestActive = value;
   }
 
-  loadTask = async (id: EditTaskId) => {
+  loadTask = async (id: TaskEntity['id'] | undefined) => {
+    if (!id) {
+      this.errorText = `Ошибка загрузки задачи. Отсутствует ID.`;
+      return false;
+    }
     this.isRequestActive = true;
-    console.log('loadTask_id', id);
-    console.log('loadTask_TasksMock[0]', TasksMock[0]);
-    //TODO: GET запрос на сервер
-    this.task = TasksMock[0];
-    // this.task = {
-    //   id: '123',
-    //   name: '456',
-    //   info: '789',
-    //   isImportant: true,
-    //   isDone: true,
-    // };
-    await delay(3000);
-    // console.log('loadTask_this.task', this.task);
-    this.isRequestActive = false;
-    return true;
+    try {
+      const data = await TaskAgentInstance.getTask(id);
+      const task = mapToInternalTask(data);
+      if (task?.id) this.task = task;
+      if (!task || !task?.id) this.errorText = `Ошибка загрузки задачи id${id}`;
+    } catch (error) {
+      console.log('EditTaskStore_editTask_error: ', error);
+      this.errorText = `Ошибка загрузки задачи id${id}`;
+    } finally {
+      this.isRequestActive = false;
+    }
   };
 
-  editTask = async (editTaskParams?: TaskEntity) => {
+  editTask = async (editTaskParams: FormTaskEntity) => {
     this.isRequestActive = true;
-    console.log('editTaskParams', editTaskParams);
-    console.log(this.task.id, this.task.name, this.task.info, this.task.isImportant, this.task.isDone);
-    //TODO: POST запрос на сервер
-    await delay(3000);
-    this.isRequestActive = false;
-    return true;
+    try {
+      const externalTaskParams = mapToExternalTask(editTaskParams);
+      const data = await TaskAgentInstance.updateTask(this.task.id, externalTaskParams);
+      const task = mapToInternalTask(data);
+      if (task?.id) return true;
+      if (!task || !task?.id) this.errorText = 'Ошибка. Задача не изменена. Попробуйте еще раз...';
+    } catch (error) {
+      console.log('EditTaskStore_editTask_error: ', error);
+      this.errorText = 'Ошибка. Задача не изменена. Попробуйте еще раз...';
+    } finally {
+      this.isRequestActive = false;
+    }
   };
 }
 
