@@ -45,9 +45,9 @@ export function AddTaskFormProto() {
         render={({ field, fieldState: { error } }) => (
           <TextField
             disabled={isRequestActive}
-            label={'Task name'}
-            placeholder={'Clean room'}
-            inputType={'text'}
+            label="Task name"
+            placeholder="Clean room"
+            inputType="text"
             value={field.value}
             onChange={onTaskNameInputChange}
             errorText={error?.message}
@@ -60,9 +60,9 @@ export function AddTaskFormProto() {
         render={({ field, fieldState: { error } }) => (
           <TextField
             disabled={isRequestActive}
-            label={'What to do(description)'}
-            placeholder={'Clean my room'}
-            inputType={'text'}
+            label="What to do(description)"
+            placeholder="Clean my room"
+            inputType="text"
             value={field.value}
             onChange={onTaskDescInputChange}
             errorText={error?.message}
@@ -75,7 +75,7 @@ export function AddTaskFormProto() {
         render={({ field }) => (
           <Checkbox
             disabled={isRequestActive}
-            label={'Important'}
+            label="Important"
             onChange={onCheckboxInputChange}
             checked={field.value}
           />
@@ -87,7 +87,7 @@ export function AddTaskFormProto() {
             <Loader isLoading={isRequestActive} variant="dot">
               {null}
             </Loader>
-            <span>{'Создание задачи...'}</span>
+            <span>Создание задачи...</span>
           </>
         ) : (
           'Add task'

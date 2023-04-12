@@ -54,7 +54,7 @@ export class TasksStore {
     this._isTasksLoading = value;
   }
 
-  loadTasks = async (searchParams?: SearchFormEntity) => {
+  async loadTasks(searchParams?: SearchFormEntity) {
     this.isTasksLoading = true;
     try {
       const externalSearchParams = mapToExternalParams(searchParams);
@@ -68,9 +68,9 @@ export class TasksStore {
     } finally {
       this.isTasksLoading = false;
     }
-  };
+  }
 
-  changeTaskImportance = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  async changeTaskImportance(taskId: TaskEntity['id'], currentStatus: boolean) {
     this.isTasksLoading = true;
     try {
       await TaskAgentInstance.updateTask(taskId, { isImportant: !currentStatus });
@@ -82,7 +82,7 @@ export class TasksStore {
     } finally {
       this.isTasksLoading = false;
     }
-  };
+  }
 
   changeTaskComplete = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
     this.isTasksLoading = true;
@@ -98,7 +98,7 @@ export class TasksStore {
     }
   };
 
-  deleteTask = async (taskId: TaskEntity['id']) => {
+  async deleteTask(taskId: TaskEntity['id']) {
     this.isTasksLoading = true;
     try {
       await TaskAgentInstance.deleteTask(taskId);
@@ -110,7 +110,7 @@ export class TasksStore {
     } finally {
       this.isTasksLoading = false;
     }
-  };
+  }
 }
 
 export const TasksStoreInstance = new TasksStore();

@@ -55,7 +55,7 @@ export class EditTaskStore {
     this._isRequestActive = value;
   }
 
-  loadTask = async (id: TaskEntity['id'] | undefined) => {
+  async loadTask(id: TaskEntity['id'] | undefined) {
     if (!id) {
       this.errorText = `Ошибка загрузки задачи. Отсутствует ID.`;
       return false;
@@ -72,9 +72,9 @@ export class EditTaskStore {
     } finally {
       this.isRequestActive = false;
     }
-  };
+  }
 
-  editTask = async (editTaskParams: FormTaskEntity) => {
+  async editTask(editTaskParams: FormTaskEntity) {
     this.isRequestActive = true;
     try {
       const externalTaskParams = mapToExternalTask(editTaskParams);
@@ -88,7 +88,7 @@ export class EditTaskStore {
     } finally {
       this.isRequestActive = false;
     }
-  };
+  }
 }
 
 export const EditTaskStoreInstance = new EditTaskStore();

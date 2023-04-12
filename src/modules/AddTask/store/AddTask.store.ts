@@ -36,7 +36,7 @@ export class AddTaskStore {
     this._isRequestActive = value;
   }
 
-  addTask = async (addTaskParams: FormTaskEntity) => {
+  async addTask(addTaskParams: FormTaskEntity) {
     this.isRequestActive = true;
     try {
       const data = await TaskAgentInstance.createTask(addTaskParams);
@@ -49,7 +49,7 @@ export class AddTaskStore {
     } finally {
       this.isRequestActive = false;
     }
-  };
+  }
 }
 
 export const AddTaskStoreInstance = new AddTaskStore();

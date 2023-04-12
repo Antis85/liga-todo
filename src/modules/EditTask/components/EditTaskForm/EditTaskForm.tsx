@@ -64,9 +64,9 @@ export function EditTaskFormProto() {
         render={({ field, fieldState: { error } }) => (
           <TextField
             disabled={isRequestActive}
-            label={'Task name'}
-            placeholder={'Clean room'}
-            inputType={'text'}
+            label="Task name"
+            placeholder="Clean room"
+            inputType="text"
             value={field.value}
             onChange={onTaskNameInputChange}
             errorText={error?.message}
@@ -79,9 +79,9 @@ export function EditTaskFormProto() {
         render={({ field, fieldState: { error } }) => (
           <TextField
             disabled={isRequestActive}
-            label={'What to do(description)'}
-            placeholder={'Clean my room'}
-            inputType={'text'}
+            label="What to do(description)"
+            placeholder="Clean my room"
+            inputType="text"
             value={field.value}
             onChange={onTaskDescInputChange}
             errorText={error?.message}
@@ -94,7 +94,7 @@ export function EditTaskFormProto() {
         render={({ field }) => (
           <Checkbox
             disabled={isRequestActive || checkboxComplitedValue}
-            label={'Important'}
+            label="Important"
             onChange={onCheckboxImportantChange}
             checked={field.value && !checkboxComplitedValue}
           />
@@ -106,7 +106,7 @@ export function EditTaskFormProto() {
         render={({ field }) => (
           <Checkbox
             disabled={isRequestActive}
-            label={'Complited'}
+            label="Complited"
             onChange={onCheckboxComplitedChange}
             checked={field.value}
           />
@@ -118,7 +118,7 @@ export function EditTaskFormProto() {
             <Loader isLoading={isRequestActive} variant="dot">
               {null}
             </Loader>
-            <span>{'Загрузка...'}</span>
+            <span>Загрузка...</span>
           </>
         ) : (
           'Edit task'

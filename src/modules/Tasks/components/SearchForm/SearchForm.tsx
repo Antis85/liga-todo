@@ -43,7 +43,7 @@ export function SearchFormProto() {
           <StatusFilter disabled={isTasksLoading} onChange={onFilterChange} tasksType={field.value} />
         )}
       />
-      <button disabled={isTasksLoading} type="submit" className="btn btn-primary" /*onClick={onSubmit}*/>
+      <button disabled={isTasksLoading} type="submit" className="btn btn-primary">
         Find
       </button>
     </form>

@@ -12,7 +12,7 @@ import {
 
 class TasksAgent extends BasicAgent {
   constructor() {
-    super(process.env.APP_API as string);
+    super(process.env.APP_API ?? 'https://intership-liga.ru');
   }
 
   async getAllTasks(params?: GetAllTasksQuery): Promise<GetAllTasksResponse> {
