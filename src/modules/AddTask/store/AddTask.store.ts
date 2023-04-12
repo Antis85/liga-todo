@@ -9,7 +9,7 @@ export class AddTaskStore {
       _errorText: observable,
       _isRequestActive: observable,
 
-      addTask: action,
+      addTask: action.bound,
 
       errorText: computed,
       isRequestActive: computed,

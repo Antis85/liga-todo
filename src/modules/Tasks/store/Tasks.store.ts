@@ -10,10 +10,10 @@ export class TasksStore {
       _tasksStats: observable,
       _isTasksLoading: observable,
 
-      loadTasks: action,
-      changeTaskImportance: action,
-      changeTaskComplete: action,
-      deleteTask: action,
+      loadTasks: action.bound,
+      changeTaskImportance: action.bound,
+      changeTaskComplete: action.bound,
+      deleteTask: action.bound,
 
       tasks: computed,
       isTasksLoading: computed,
@@ -74,7 +74,7 @@ export class TasksStore {
     this.isTasksLoading = true;
     try {
       await TaskAgentInstance.updateTask(taskId, { isImportant: !currentStatus });
-      this.loadTasks();
+      await this.loadTasks();
     } catch (error) {
       console.log('changeTaskImportance_error: ', error);
       this.tasks = null;
@@ -84,11 +84,11 @@ export class TasksStore {
     }
   }
 
-  changeTaskComplete = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  async changeTaskComplete(taskId: TaskEntity['id'], currentStatus: boolean) {
     this.isTasksLoading = true;
     try {
       await TaskAgentInstance.updateTask(taskId, { isCompleted: !currentStatus });
-      this.loadTasks();
+      await this.loadTasks();
     } catch (error) {
       console.log('changeTaskComplete_error: ', error);
       this.tasks = null;
@@ -96,13 +96,13 @@ export class TasksStore {
     } finally {
       this.isTasksLoading = false;
     }
-  };
+  }
 
   async deleteTask(taskId: TaskEntity['id']) {
     this.isTasksLoading = true;
     try {
       await TaskAgentInstance.deleteTask(taskId);
-      this.loadTasks();
+      await this.loadTasks();
     } catch (error) {
       console.log('deleteTask_error: ', error);
       this.tasks = null;

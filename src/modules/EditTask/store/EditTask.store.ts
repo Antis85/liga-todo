@@ -10,8 +10,8 @@ export class EditTaskStore {
       _errorText: observable,
       _isRequestActive: observable,
 
-      loadTask: action,
-      editTask: action,
+      loadTask: action.bound,
+      editTask: action.bound,
 
       task: computed,
       errorText: computed,

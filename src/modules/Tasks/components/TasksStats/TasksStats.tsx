@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { TasksStoreInstance } from '../../store';
 import { Loader } from 'components/Loader';
+import './TasksStats.css';
 
 export function TasksStatsProto() {
   const { tasksStats, isTasksLoading } = TasksStoreInstance;

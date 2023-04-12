@@ -1,3 +1,7 @@
 .search-form {
   margin: 1rem 0;
 }
+
+.btn.btn-primary {
+  margin-left: 2px;
+}
