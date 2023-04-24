@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed } from 'mobx';
 import { PrivateFields } from './AddTask.store.types';
 import { mapToInternalTask } from 'helpers/index';
-import { FormTaskEntity } from 'domains/index';
+import { TaskFormEntity } from 'domains/index';
 import { TaskAgentInstance } from 'http/index';
 export class AddTaskStore {
   constructor() {
@@ -36,7 +36,7 @@ export class AddTaskStore {
     this._isRequestActive = value;
   }
 
-  async addTask(addTaskParams: FormTaskEntity) {
+  async addTask(addTaskParams: TaskFormEntity) {
     this.isRequestActive = true;
     try {
       const data = await TaskAgentInstance.createTask(addTaskParams);

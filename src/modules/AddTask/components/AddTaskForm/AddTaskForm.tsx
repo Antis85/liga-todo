@@ -7,26 +7,28 @@ import { AddTaskStoreInstance } from '../../store';
 import { defaultAddTaskFormValues } from './AddTaskForm.constants';
 import { validationSchema } from './AddTaskFormValidationSchema';
 import { TextField, Checkbox, Loader } from 'components/index';
-import { FormTaskEntity } from 'domains/index';
+import { TaskFormEntity, FieldNamesType } from 'domains/index';
 import './AddTaskForm.css';
 
 export function AddTaskFormProto() {
   const { isRequestActive, errorText, addTask } = AddTaskStoreInstance;
 
-  const { control, handleSubmit, setValue, reset } = useForm<FormTaskEntity>({
+  const { control, handleSubmit, setValue, reset } = useForm<TaskFormEntity>({
     defaultValues: defaultAddTaskFormValues,
     resolver: yupResolver(validationSchema),
   });
 
   const navigate = useNavigate();
 
-  const onTaskNameInputChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('name', evt.target.value);
+  const onFormElChange = (evt: ChangeEvent<HTMLInputElement>, fieldName: FieldNamesType) => {
+    if (isRequestActive) return;
 
-  const onTaskDescInputChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('info', evt.target.value);
+    setValue(fieldName, fieldName !== 'isImportant' ? evt.target.value : evt.target.checked);
+  };
 
-  const onCheckboxInputChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('isImportant', evt.target.checked);
+  const onSubmit = async (data: TaskFormEntity) => {
+    if (isRequestActive) return;
 
-  const onSubmit = async (data: FormTaskEntity) => {
     const addTaskSuccess = await addTask({
       ...data,
       isDone: false,
@@ -49,7 +51,7 @@ export function AddTaskFormProto() {
             placeholder="Clean room"
             inputType="text"
             value={field.value}
-            onChange={onTaskNameInputChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             errorText={error?.message}
           />
         )}
@@ -64,7 +66,7 @@ export function AddTaskFormProto() {
             placeholder="Clean my room"
             inputType="text"
             value={field.value}
-            onChange={onTaskDescInputChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             errorText={error?.message}
           />
         )}
@@ -76,7 +78,7 @@ export function AddTaskFormProto() {
           <Checkbox
             disabled={isRequestActive}
             label="Important"
-            onChange={onCheckboxInputChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             checked={field.value}
           />
         )}

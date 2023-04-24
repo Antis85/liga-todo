@@ -1,5 +1,5 @@
 import { FILTER_TYPES } from 'constants/index';
-import { TaskEntity, SearchFormEntity, TasksStatsEntity, FormTaskEntity } from 'domains/index';
+import { TaskEntity, SearchFormEntity, TasksStatsEntity, TaskFormEntity } from 'domains/index';
 import {
   GetAllTasksQuery,
   GetAllTasksResponse,
@@ -84,7 +84,7 @@ export const mapToInternalTask = (task: GetTaskResponse | CreateTaskResponse | U
   return internalTask;
 };
 
-export const mapToExternalTask = (task: FormTaskEntity): UpdateTaskQuery => {
+export const mapToExternalTask = (task: TaskFormEntity): UpdateTaskQuery => {
   return {
     name: task.name ?? undefined,
     info: task.info ?? undefined,

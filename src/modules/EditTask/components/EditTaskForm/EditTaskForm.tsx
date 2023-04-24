@@ -7,7 +7,7 @@ import { EditTaskStoreInstance } from '../../store';
 import { defaultEditTaskFormValues } from './EditTaskForm.constants';
 import { validationSchema } from './EditTaskFormValidationSchema';
 import { TextField, Checkbox, Loader } from 'components/index';
-import { FormTaskEntity } from 'domains/index';
+import { TaskFormEntity, FieldNamesType } from 'domains/index';
 import './EditTaskForm.css';
 
 export function EditTaskFormProto() {
@@ -15,7 +15,7 @@ export function EditTaskFormProto() {
 
   const { name, info, isImportant, isDone } = task;
 
-  const { control, handleSubmit, setValue, reset } = useForm<FormTaskEntity>({
+  const { control, handleSubmit, setValue, reset } = useForm<TaskFormEntity>({
     defaultValues: defaultEditTaskFormValues,
     resolver: yupResolver(validationSchema),
   });
@@ -26,7 +26,7 @@ export function EditTaskFormProto() {
   const navigate = useNavigate();
 
   useEffect((): void => {
-    loadTask(params.taskId);
+    if (params.taskId) loadTask(params.taskId);
   }, [params.taskId]);
 
   useEffect((): void => {
@@ -37,18 +37,19 @@ export function EditTaskFormProto() {
     setValue('isDone', isDone);
   }, [task]);
 
-  const onTaskNameInputChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('name', evt.target.value);
+  const onFormElChange = (evt: ChangeEvent<HTMLInputElement>, fieldName: FieldNamesType) => {
+    if (isRequestActive) return;
 
-  const onTaskDescInputChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('info', evt.target.value);
-
-  const onCheckboxImportantChange = (evt: ChangeEvent<HTMLInputElement>) => setValue('isImportant', evt.target.checked);
-
-  const onCheckboxComplitedChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    setValue('isDone', evt.target.checked);
-    setCheckboxComplitedValue(evt.target.checked);
+    setValue(
+      fieldName,
+      fieldName === 'isImportant' ? evt.target.checked : fieldName === 'isDone' ? evt.target.checked : evt.target.value
+    );
+    if (fieldName === 'isDone') setCheckboxComplitedValue(evt.target.checked);
   };
 
-  const onSubmit = async (data: FormTaskEntity) => {
+  const onSubmit = async (data: TaskFormEntity) => {
+    if (isRequestActive) return;
+
     const editTaskSuccess = await editTask(data);
     if (editTaskSuccess) {
       reset();
@@ -68,7 +69,7 @@ export function EditTaskFormProto() {
             placeholder="Clean room"
             inputType="text"
             value={field.value}
-            onChange={onTaskNameInputChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             errorText={error?.message}
           />
         )}
@@ -83,7 +84,7 @@ export function EditTaskFormProto() {
             placeholder="Clean my room"
             inputType="text"
             value={field.value}
-            onChange={onTaskDescInputChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             errorText={error?.message}
           />
         )}
@@ -95,7 +96,7 @@ export function EditTaskFormProto() {
           <Checkbox
             disabled={isRequestActive || checkboxComplitedValue}
             label="Important"
-            onChange={onCheckboxImportantChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             checked={field.value && !checkboxComplitedValue}
           />
         )}
@@ -107,7 +108,7 @@ export function EditTaskFormProto() {
           <Checkbox
             disabled={isRequestActive}
             label="Complited"
-            onChange={onCheckboxComplitedChange}
+            onChange={(evt) => onFormElChange(evt, field.name)}
             checked={field.value}
           />
         )}

@@ -1,6 +1,6 @@
-import { FormTaskEntity } from 'domains/index';
+import { TaskFormEntity } from 'domains/index';
 
-export const defaultEditTaskFormValues: FormTaskEntity = {
+export const defaultEditTaskFormValues: TaskFormEntity = {
   name: '',
   info: '',
   isImportant: false,

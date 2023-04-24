@@ -16,6 +16,7 @@ export class TasksStore {
       deleteTask: action.bound,
 
       tasks: computed,
+      tasksStats: computed,
       isTasksLoading: computed,
     });
   }
@@ -76,7 +77,7 @@ export class TasksStore {
       await TaskAgentInstance.updateTask(taskId, { isImportant: !currentStatus });
       await this.loadTasks();
     } catch (error) {
-      console.log('changeTaskImportance_error: ', error);
+      console.log('Tasks.store_changeTaskImportance_error: ', error);
       this.tasks = null;
       this.tasksStats = null;
     } finally {
@@ -90,7 +91,7 @@ export class TasksStore {
       await TaskAgentInstance.updateTask(taskId, { isCompleted: !currentStatus });
       await this.loadTasks();
     } catch (error) {
-      console.log('changeTaskComplete_error: ', error);
+      console.log('Tasks.store_changeTaskComplete_error: ', error);
       this.tasks = null;
       this.tasksStats = null;
     } finally {
@@ -104,7 +105,7 @@ export class TasksStore {
       await TaskAgentInstance.deleteTask(taskId);
       await this.loadTasks();
     } catch (error) {
-      console.log('deleteTask_error: ', error);
+      console.log('Tasks.store_deleteTask_error: ', error);
       this.tasks = null;
       this.tasksStats = null;
     } finally {

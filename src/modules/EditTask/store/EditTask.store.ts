@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed } from 'mobx';
 import { PrivateFields } from './EditTask.store.types';
 import { mapToExternalTask, mapToInternalTask } from 'helpers/index';
-import { FormTaskEntity, TaskEntity } from 'domains/index';
+import { TaskFormEntity, TaskEntity } from 'domains/index';
 import { TaskAgentInstance } from 'http/index';
 export class EditTaskStore {
   constructor() {
@@ -74,7 +74,7 @@ export class EditTaskStore {
     }
   }
 
-  async editTask(editTaskParams: FormTaskEntity) {
+  async editTask(editTaskParams: TaskFormEntity) {
     this.isRequestActive = true;
     try {
       const externalTaskParams = mapToExternalTask(editTaskParams);

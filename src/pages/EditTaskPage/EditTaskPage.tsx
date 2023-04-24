@@ -8,7 +8,11 @@ export function EditTaskPage() {
 
   return (
     <PageContainer>
-      <h1>TODO LIST | EDIT TASK {params.taskId}</h1>
+      {params?.taskId ? (
+        <h1>TODO LIST | EDIT TASK {params?.taskId || ''}</h1>
+      ) : (
+        <p className="text-danger">TODO LIST | EDIT TASK | ERROR</p>
+      )}
       <EditTask />
     </PageContainer>
   );

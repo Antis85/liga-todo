@@ -14,13 +14,25 @@ export function SearchFormProto() {
     defaultValues: defaultSearchFormValues,
   });
 
-  const onSearchInputChange = (searchValue: string) => setValue('searchValue', searchValue);
+  const onSearchInputChange = (searchValue: string) => {
+    if (isTasksLoading) return;
+    setValue('searchValue', searchValue);
+  };
 
-  const onSearchInputReset = () => setValue('searchValue', '');
+  const onSearchInputReset = () => {
+    if (isTasksLoading) return;
+    setValue('searchValue', '');
+  };
 
-  const onFilterChange = (filterType: FiltersType) => setValue('filterType', filterType);
+  const onFilterChange = (filterType: FiltersType) => {
+    if (isTasksLoading) return;
+    setValue('filterType', filterType);
+  };
 
-  const onSubmit = (data: SearchFormEntity) => loadTasks(data);
+  const onSubmit = (data: SearchFormEntity) => {
+    if (isTasksLoading) return;
+    loadTasks(data);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="search-form d-flex justify-content-between">

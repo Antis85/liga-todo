@@ -7,9 +7,6 @@ export interface TaskEntity {
   isImportant: boolean;
   isDone: boolean;
 }
-
-export type FormTaskEntity = Omit<TaskEntity, 'id'>;
-
 export interface TasksStatsEntity {
   total: number;
   important: number;
@@ -22,3 +19,7 @@ export interface SearchFormEntity {
 }
 
 export type FiltersType = typeof FILTER_TYPES[keyof typeof FILTER_TYPES];
+
+export type TaskFormEntity = Omit<TaskEntity, 'id'>;
+
+export type FieldNamesType = keyof TaskFormEntity;
